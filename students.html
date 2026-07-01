@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Browse Positions — Klinq</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --purple: #5B549A;
+    --teal: #2E8A6A;
+    --bg: #F8F7FF;
+    --dark: #1A1A2E;
+    --border: rgba(83,74,183,0.12);
+    --radius: 14px;
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); }
+  h1,h2,h3,h4 { font-family: 'Plus Jakarta Sans', sans-serif; }
+  a { text-decoration: none; color: inherit; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(248,247,255,0.92); backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border);
+    padding: 0 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .logo { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+  .logo .kli { color: var(--purple); }
+  .logo .nq  { color: var(--teal); }
+  .nav-links { display: flex; gap: 32px; font-size: 14px; font-weight: 500; }
+  .nav-links a { color: #555; }
+  .nav-links a:hover { color: var(--purple); }
+  .nav-links a.active { color: var(--purple); }
+  .nav-cta { background: var(--purple); color: #fff; padding: 9px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; border: none; cursor: pointer; }
+
+  /* PAGE HEADER */
+  .page-header { padding: 48px 48px 32px; border-bottom: 0.5px solid var(--border); background: #fff; }
+  .page-header h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.4px; margin-bottom: 6px; }
+  .page-header p { font-size: 15px; color: #666; }
+
+  /* LAYOUT */
+  .browse-layout { display: grid; grid-template-columns: 280px 1fr; gap: 0; min-height: calc(100vh - 120px); }
+
+  /* SIDEBAR */
+  .sidebar {
+    background: #fff;
+    border-right: 0.5px solid var(--border);
+    padding: 28px 24px;
+    display: flex; flex-direction: column; gap: 28px;
+  }
+  .filter-group h4 { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #999; margin-bottom: 12px; }
+  .search-box {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--bg); border: 0.5px solid var(--border); border-radius: 10px;
+    padding: 10px 14px;
+  }
+  .search-box input { border: none; background: transparent; font-size: 14px; color: var(--dark); outline: none; width: 100%; font-family: 'Inter', sans-serif; }
+  .search-icon { color: #aaa; font-size: 16px; }
+  .filter-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill {
+    font-size: 13px; padding: 6px 13px; border-radius: 20px;
+    border: 0.5px solid var(--border); cursor: pointer;
+    background: #fff; color: #555;
+    transition: all 0.1s;
+  }
+  .pill:hover, .pill.active { background: var(--purple); color: #fff; border-color: var(--purple); }
+  .pill.teal:hover, .pill.teal.active { background: var(--teal); border-color: var(--teal); }
+  .checkbox-list { display: flex; flex-direction: column; gap: 10px; }
+  .checkbox-item { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #444; cursor: pointer; }
+  .checkbox-item input[type="checkbox"] { accent-color: var(--purple); width: 15px; height: 15px; }
+  .filter-divider { border: none; border-top: 0.5px solid var(--border); }
+
+  /* MAIN */
+  .main-content { padding: 24px 32px; }
+  .results-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .results-count { font-size: 14px; color: #666; }
+  .results-count strong { color: var(--dark); font-weight: 600; }
+  .sort-select {
+    font-size: 13px; color: #555; border: 0.5px solid var(--border);
+    border-radius: 8px; padding: 7px 12px; background: #fff;
+    font-family: 'Inter', sans-serif; cursor: pointer; outline: none;
+  }
+  .active-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .active-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; padding: 5px 10px; border-radius: 6px;
+    background: rgba(83,74,183,0.08); color: var(--purple);
+    border: 0.5px solid rgba(83,74,183,0.2);
+  }
+  .active-tag button { background: none; border: none; color: var(--purple); cursor: pointer; font-size: 14px; line-height: 1; padding: 0; }
+
+  /* CARDS */
+  .cards-grid { display: flex; flex-direction: column; gap: 14px; }
+  .position-card {
+    background: #fff;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .position-card:hover { border-color: rgba(83,74,183,0.35); }
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+  .card-left { display: flex; align-items: flex-start; gap: 14px; }
+  .lab-logo {
+    width: 44px; height: 44px; border-radius: 10px;
+    border: 0.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; background: var(--bg); flex-shrink: 0;
+  }
+  .card-title { font-size: 16px; font-weight: 700; margin-bottom: 3px; color: var(--dark); }
+  .card-lab { font-size: 13px; color: #666; }
+  .card-actions { display: flex; align-items: center; gap: 10px; }
+  .save-btn {
+    width: 32px; height: 32px; border-radius: 8px; border: 0.5px solid var(--border);
+    background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: #bbb;
+  }
+  .save-btn:hover { border-color: var(--purple); color: var(--purple); }
+  .apply-btn {
+    padding: 8px 18px; border-radius: 8px;
+    background: var(--purple); color: #fff;
+    font-size: 13px; font-weight: 600;
+    border: none; cursor: pointer;
+    transition: background 0.1s;
+  }
+  .apply-btn:hover { background: #3e369e; }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 7px; margin: 14px 0 12px; }
+  .tag {
+    font-size: 12px; padding: 4px 10px; border-radius: 6px;
+    border: 0.5px solid transparent;
+  }
+  .tag.specialty { background: rgba(83,74,183,0.08); color: #3e369e; border-color: rgba(83,74,183,0.15); }
+  .tag.paid    { background: rgba(29,158,117,0.1); color: #0c6e51; border-color: rgba(29,158,117,0.2); }
+  .tag.duration { background: rgba(26,26,46,0.06); color: #555; border-color: rgba(26,26,46,0.1); }
+  .tag.remote  { background: rgba(26,26,46,0.06); color: #555; border-color: rgba(26,26,46,0.1); }
+  .card-desc { font-size: 14px; color: #555; line-height: 1.6; margin-bottom: 14px; }
+  .card-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 0.5px solid var(--border); padding-top: 12px;
+    font-size: 12px; color: #999;
+  }
+  .card-meta { display: flex; gap: 16px; }
+  .card-meta span { display: flex; align-items: center; gap: 4px; }
+  .new-badge {
+    font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 5px;
+    background: rgba(29,158,117,0.1); color: var(--teal);
+  }
+
+  /* PAGINATION */
+  .pagination { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 32px; padding-bottom: 48px; }
+  .page-btn {
+    width: 36px; height: 36px; border-radius: 8px; border: 0.5px solid var(--border);
+    background: #fff; cursor: pointer; font-size: 14px; color: #555;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .page-btn.active { background: var(--purple); color: #fff; border-color: var(--purple); }
+  .page-btn:hover:not(.active) { border-color: rgba(83,74,183,0.3); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo"><span class="kli">Kli</span><span class="nq">nq</span></a>
+  <div class="nav-links">
+    <a href="students.html" class="active">Browse Positions</a>
+    <a href="professors.html">Post a Position</a>
+    <a href="dashboard.html">My Applications</a>
+    <a href="index.html">About</a>
+  </div>
+  <button class="nav-cta">Sign In</button>
+</nav>
+
+<div class="page-header">
+  <h1>Research Positions</h1>
+  <p>1,243 open positions across Canadian medical schools and universities</p>
+</div>
+
+<div class="browse-layout">
+
+  <aside class="sidebar">
+    <div class="filter-group">
+      <h4>Search</h4>
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Keywords, lab name, PI..." />
+      </div>
+    </div>
+
+    <hr class="filter-divider" />
+
+    <div class="filter-group">
+      <h4>Specialty</h4>
+      <div class="filter-pills">
+        <span class="pill active">All</span>
+        <span class="pill">Cardiology</span>
+        <span class="pill">Oncology</span>
+        <span class="pill">Neuroscience</span>
+        <span class="pill">Immunology</span>
+        <span class="pill">Epidemiology</span>
+        <span class="pill">Surgery</span>
+        <span class="pill">Psychiatry</span>
+      </div>
+    </div>
+
+    <hr class="filter-divider" />
+
+    <div class="filter-group">
+      <h4>Province</h4>
+      <div class="filter-pills">
+        <span class="pill active">All</span>
+        <span class="pill">ON</span>
+        <span class="pill">QC</span>
+        <span class="pill">BC</span>
+        <span class="pill">AB</span>
+        <span class="pill">MB</span>
+        <span class="pill">NS</span>
+      </div>
+    </div>
+
+    <hr class="filter-divider" />
+
+    <div class="filter-group">
+      <h4>Funding</h4>
+      <div class="checkbox-list">
+        <label class="checkbox-item"><input type="checkbox" checked /> Paid stipend</label>
+        <label class="checkbox-item"><input type="checkbox" /> Volunteer</label>
+        <label class="checkbox-item"><input type="checkbox" /> CIHR/NSERC funded</label>
+        <label class="checkbox-item"><input type="checkbox" /> Academic credit</label>
+      </div>
+    </div>
+
+    <hr class="filter-divider" />
+
+    <div class="filter-group">
+      <h4>Duration</h4>
+      <div class="checkbox-list">
+        <label class="checkbox-item"><input type="checkbox" /> Summer (8–16 weeks)</label>
+        <label class="checkbox-item"><input type="checkbox" /> 1 semester</label>
+        <label class="checkbox-item"><input type="checkbox" checked /> Longitudinal (1+ year)</label>
+        <label class="checkbox-item"><input type="checkbox" /> Flexible</label>
+      </div>
+    </div>
+
+    <hr class="filter-divider" />
+
+    <div class="filter-group">
+      <h4>Student level</h4>
+      <div class="checkbox-list">
+        <label class="checkbox-item"><input type="checkbox" checked /> Pre-clerkship (MD1/MD2)</label>
+        <label class="checkbox-item"><input type="checkbox" /> Clerkship</label>
+        <label class="checkbox-item"><input type="checkbox" /> MD/PhD</label>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="results-bar">
+      <span class="results-count">Showing <strong>1,243</strong> positions</span>
+      <select class="sort-select">
+        <option>Sort: Most recent</option>
+        <option>Sort: Best match</option>
+        <option>Sort: Stipend: high to low</option>
+        <option>Sort: Deadline: soonest</option>
+      </select>
+    </div>
+
+    <div class="active-filters">
+      <span class="active-tag">Paid stipend <button>×</button></span>
+      <span class="active-tag">Longitudinal <button>×</button></span>
+      <span class="active-tag">MD1/MD2 <button>×</button></span>
+    </div>
+
+    <div class="cards-grid">
+
+      <div class="position-card">
+        <div class="card-top">
+          <div class="card-left">
+            <div class="lab-logo">🧬</div>
+            <div>
+              <div class="card-title">Clinical Cardiovascular Outcomes Research — Summer Student</div>
+              <div class="card-lab">Dr. Ananya Mehta · University of Toronto, PMCRT</div>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="save-btn" title="Save">♡</button>
+            <button class="apply-btn">Apply</button>
+          </div>
+        </div>
+        <div class="card-tags">
+          <span class="tag specialty">Cardiology</span>
+          <span class="tag paid">$7,500 stipend</span>
+          <span class="tag duration">12 weeks</span>
+          <span class="tag remote">On-site · Toronto</span>
+        </div>
+        <p class="card-desc">Join our CIHR-funded lab studying post-MI outcomes in diverse Canadian populations. You will assist with chart reviews, data cleaning, and statistical analysis in R. Authorship on one expected publication.</p>
+        <div class="card-footer">
+          <div class="card-meta">
+            <span>📅 Deadline: Feb 14, 2025</span>
+            <span>👥 2 spots available</span>
+            <span>🎓 MD1–MD2</span>
+          </div>
+          <span class="new-badge">New</span>
+        </div>
+      </div>
+
+      <div class="position-card">
+        <div class="card-top">
+          <div class="card-left">
+            <div class="lab-logo">🧠</div>
+            <div>
+              <div class="card-title">Neuroinflammation & Multiple Sclerosis Lab — Research Assistant</div>
+              <div class="card-lab">Dr. Luc Tremblay · McGill University, MNI</div>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="save-btn" title="Save">♡</button>
+            <button class="apply-btn">Apply</button>
+          </div>
+        </div>
+        <div class="card-tags">
+          <span class="tag specialty">Neuroscience</span>
+          <span class="tag paid">$6,000 stipend</span>
+          <span class="tag duration">16 weeks</span>
+          <span class="tag remote">On-site · Montreal</span>
+        </div>
+        <p class="card-desc">Investigate glial activation pathways using immunohistochemistry and flow cytometry. Prior wet-lab experience is an asset but not required. French language skills preferred but not mandatory.</p>
+        <div class="card-footer">
+          <div class="card-meta">
+            <span>📅 Deadline: Mar 1, 2025</span>
+            <span>👥 1 spot available</span>
+            <span>🎓 MD1–MD4</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="position-card">
+        <div class="card-top">
+          <div class="card-left">
+            <div class="lab-logo">🔬</div>
+            <div>
+              <div class="card-title">Cancer Epidemiology — Longitudinal Research Student</div>
+              <div class="card-lab">Dr. Priya Shankar · University of British Columbia</div>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="save-btn" title="Save">♡</button>
+            <button class="apply-btn">Apply</button>
+          </div>
+        </div>
+        <div class="card-tags">
+          <span class="tag specialty">Oncology</span>
+          <span class="tag specialty">Epidemiology</span>
+          <span class="tag paid">$500/mo</span>
+          <span class="tag duration">12+ months</span>
+        </div>
+        <p class="card-desc">Longitudinal student position analysing the BC Cancer Registry. Flexible hours (~8h/week) designed to fit around clerkship. Expected co-authorship on 2 papers by the end of the project.</p>
+        <div class="card-footer">
+          <div class="card-meta">
+            <span>📅 Rolling admissions</span>
+            <span>👥 3 spots available</span>
+            <span>🎓 MD/PhD preferred</span>
+          </div>
+          <span class="new-badge">New</span>
+        </div>
+      </div>
+
+      <div class="position-card">
+        <div class="card-top">
+          <div class="card-left">
+            <div class="lab-logo">💊</div>
+            <div>
+              <div class="card-title">Health Systems & Equity Research — Volunteer</div>
+              <div class="card-lab">Dr. Yewande Osei · McMaster University</div>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="save-btn" title="Save">♡</button>
+            <button class="apply-btn">Apply</button>
+          </div>
+        </div>
+        <div class="card-tags">
+          <span class="tag specialty">Epidemiology</span>
+          <span class="tag duration">8 weeks</span>
+          <span class="tag remote">Hybrid · Hamilton</span>
+        </div>
+        <p class="card-desc">Qualitative research on healthcare access disparities in Hamilton's newcomer populations. Ideal for students interested in global health or social medicine. No prior research experience required.</p>
+        <div class="card-footer">
+          <div class="card-meta">
+            <span>📅 Deadline: Jan 30, 2025</span>
+            <span>👥 4 spots available</span>
+            <span>🎓 All years</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="position-card">
+        <div class="card-top">
+          <div class="card-left">
+            <div class="lab-logo">🧪</div>
+            <div>
+              <div class="card-title">Immunotherapy & Transplant Immunology — CIHR Summer Award</div>
+              <div class="card-lab">Dr. Sasha Kim · University of Alberta, AHC</div>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="save-btn" title="Save">♡</button>
+            <button class="apply-btn">Apply</button>
+          </div>
+        </div>
+        <div class="card-tags">
+          <span class="tag specialty">Immunology</span>
+          <span class="tag paid">$8,000 stipend</span>
+          <span class="tag duration">14 weeks</span>
+          <span class="tag remote">On-site · Edmonton</span>
+        </div>
+        <p class="card-desc">CIHR-backed summer award position in solid organ transplant rejection mechanisms. Students will conduct bench experiments 4 days/week and attend weekly lab meetings. Strong mentorship environment.</p>
+        <div class="card-footer">
+          <div class="card-meta">
+            <span>📅 Deadline: Feb 28, 2025</span>
+            <span>👥 1 spot available</span>
+            <span>🎓 MD1–MD2</span>
+          </div>
+          <span class="new-badge">New</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="pagination">
+      <button class="page-btn">←</button>
+      <button class="page-btn active">1</button>
+      <button class="page-btn">2</button>
+      <button class="page-btn">3</button>
+      <button class="page-btn">…</button>
+      <button class="page-btn">48</button>
+      <button class="page-btn">→</button>
+    </div>
+  </main>
+
+</div>
+
+</body>
+</html>

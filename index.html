@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Klinq — Research Lab Positions for Canadian Med Students</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --purple: #5B549A;
+    --teal: #2E8A6A;
+    --bg: #F8F7FF;
+    --dark: #1A1A2E;
+    --border: rgba(83,74,183,0.12);
+    --radius: 14px;
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); }
+  h1,h2,h3,h4 { font-family: 'Plus Jakarta Sans', sans-serif; }
+  a { text-decoration: none; color: inherit; }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(248,247,255,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border);
+    padding: 0 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .logo { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+  .logo .kli { color: var(--purple); }
+  .logo .nq  { color: var(--teal); }
+  .nav-links { display: flex; gap: 32px; font-size: 14px; font-weight: 500; }
+  .nav-links a { color: #555; }
+  .nav-links a:hover { color: var(--purple); }
+  .nav-cta {
+    background: var(--purple); color: #fff;
+    padding: 9px 20px; border-radius: 8px;
+    font-size: 14px; font-weight: 500;
+    border: none; cursor: pointer;
+  }
+  .nav-cta:hover { background: #3e369e; }
+
+  /* HERO */
+  .hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 540px; }
+  .hero-panel {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 72px 56px;
+  }
+  .hero-panel.student { background: var(--purple); }
+  .hero-panel.professor { background: var(--teal); }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .hero-panel.student .hero-badge { color: rgba(255,255,255,0.7); }
+  .hero-panel.professor .hero-badge { color: rgba(255,255,255,0.7); }
+  .hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.5); }
+  .hero-panel h1 { font-size: 40px; font-weight: 700; color: #fff; line-height: 1.15; margin-bottom: 16px; letter-spacing: -0.5px; }
+  .hero-panel p { font-size: 16px; color: rgba(255,255,255,0.8); line-height: 1.65; margin-bottom: 32px; max-width: 380px; }
+  .hero-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 24px; border-radius: 10px;
+    font-size: 15px; font-weight: 600;
+    cursor: pointer; border: none; width: fit-content;
+    transition: transform 0.1s;
+  }
+  .hero-btn:hover { transform: translateY(-1px); }
+  .hero-panel.student .hero-btn { background: #fff; color: var(--purple); }
+  .hero-panel.professor .hero-btn { background: #fff; color: var(--teal); }
+  .hero-btn-arrow { font-size: 18px; }
+
+  /* STATS */
+  .stats-bar {
+    background: var(--dark);
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    border-bottom: 0.5px solid rgba(255,255,255,0.06);
+  }
+  .stat-item {
+    padding: 28px 0;
+    display: flex; flex-direction: column; align-items: center;
+    border-right: 0.5px solid rgba(255,255,255,0.08);
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-number { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 30px; font-weight: 700; color: #fff; }
+  .stat-label { font-size: 13px; color: rgba(255,255,255,0.45); margin-top: 4px; }
+  .stat-accent-purple { color: var(--purple); }
+  .stat-accent-teal   { color: var(--teal); }
+
+  /* HOW IT WORKS */
+  .section { padding: 88px 48px; }
+  .section-label {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--purple); margin-bottom: 12px;
+  }
+  .section-title { font-size: 34px; font-weight: 700; letter-spacing: -0.4px; margin-bottom: 12px; color: var(--dark); }
+  .section-sub { font-size: 16px; color: #666; line-height: 1.65; max-width: 520px; margin-bottom: 52px; }
+  .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .step-card {
+    background: #fff;
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px 28px;
+    position: relative;
+  }
+  .step-number {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--purple);
+    background: rgba(83,74,183,0.08);
+    border-radius: 6px;
+    padding: 4px 10px;
+    display: inline-block; margin-bottom: 20px;
+  }
+  .step-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px; font-size: 22px;
+  }
+  .step-icon.purple { background: rgba(83,74,183,0.1); }
+  .step-icon.teal   { background: rgba(29,158,117,0.1); }
+  .step-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 10px; color: var(--dark); }
+  .step-card p { font-size: 14px; color: #666; line-height: 1.65; }
+
+  /* AUDIENCE */
+  .audience { background: #fff; border-top: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border); }
+  .audience-inner { display: grid; grid-template-columns: 1fr 1fr; }
+  .audience-col { padding: 72px 56px; }
+  .audience-col.right { border-left: 0.5px solid var(--border); background: rgba(29,158,117,0.02); }
+  .audience-col .section-label.teal { color: var(--teal); }
+  .audience-col h2 { font-size: 28px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.3px; }
+  .audience-col p { font-size: 15px; color: #666; line-height: 1.7; margin-bottom: 28px; }
+  .feature-list { list-style: none; display: flex; flex-direction: column; gap: 14px; margin-bottom: 36px; }
+  .feature-item { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; color: #444; line-height: 1.5; }
+  .feature-check {
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; flex-shrink: 0; margin-top: 1px;
+  }
+  .feature-check.purple { background: rgba(83,74,183,0.12); color: var(--purple); }
+  .feature-check.teal   { background: rgba(29,158,117,0.12); color: var(--teal); }
+  .audience-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 22px; border-radius: 10px;
+    font-size: 14px; font-weight: 600; cursor: pointer; border: none;
+    transition: transform 0.1s;
+  }
+  .audience-btn:hover { transform: translateY(-1px); }
+  .audience-btn.purple { background: var(--purple); color: #fff; }
+  .audience-btn.teal   { background: var(--teal); color: #fff; }
+
+  /* CTA */
+  .cta-section { background: var(--dark); padding: 96px 48px; text-align: center; }
+  .cta-section h2 { font-size: 38px; font-weight: 700; color: #fff; letter-spacing: -0.5px; margin-bottom: 14px; }
+  .cta-section p { font-size: 16px; color: rgba(255,255,255,0.55); margin-bottom: 40px; }
+  .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .cta-btn {
+    padding: 14px 28px; border-radius: 10px; font-size: 15px; font-weight: 600;
+    cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 8px;
+    transition: transform 0.1s;
+  }
+  .cta-btn:hover { transform: translateY(-1px); }
+  .cta-btn.purple { background: var(--purple); color: #fff; }
+  .cta-btn.teal   { background: var(--teal); color: #fff; }
+  .cta-btn.outline { background: transparent; color: rgba(255,255,255,0.7); border: 0.5px solid rgba(255,255,255,0.25); }
+  .cta-btn.outline:hover { background: rgba(255,255,255,0.06); }
+
+  /* FOOTER */
+  footer {
+    background: var(--dark);
+    border-top: 0.5px solid rgba(255,255,255,0.07);
+    padding: 28px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  footer .logo .kli { color: var(--purple); }
+  footer .logo .nq  { color: var(--teal); }
+  .footer-links { display: flex; gap: 28px; font-size: 13px; }
+  .footer-links a { color: rgba(255,255,255,0.4); }
+  .footer-links a:hover { color: rgba(255,255,255,0.7); }
+  .footer-copy { font-size: 12px; color: rgba(255,255,255,0.25); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><span class="kli">Kli</span><span class="nq">nq</span></div>
+  <div class="nav-links">
+    <a href="students.html">Browse Positions</a>
+    <a href="professors.html">Post a Position</a>
+    <a href="dashboard.html">My Applications</a>
+    <a href="#">About</a>
+  </div>
+  <button class="nav-cta" onclick="location.href='students.html'">Get Started</button>
+</nav>
+
+<section class="hero">
+  <div class="hero-panel student">
+    <div class="hero-badge"><span class="hero-badge-dot"></span> For Students</div>
+    <h1>Find your research lab match.</h1>
+    <p>Browse hundreds of paid and volunteer research positions at Canadian universities — filter by specialty, duration, and funding.</p>
+    <button class="hero-btn" onclick="location.href='students.html'">
+      Browse Positions <span class="hero-btn-arrow">→</span>
+    </button>
+  </div>
+  <div class="hero-panel professor">
+    <div class="hero-badge"><span class="hero-badge-dot"></span> For Professors</div>
+    <h1>Recruit motivated med students.</h1>
+    <p>Post your lab opening in minutes and receive applications from vetted, research-ready medical students across Canada.</p>
+    <button class="hero-btn" onclick="location.href='professors.html'">
+      Post a Position <span class="hero-btn-arrow">→</span>
+    </button>
+  </div>
+</section>
+
+<div class="stats-bar">
+  <div class="stat-item">
+    <span class="stat-number stat-accent-purple">1,200+</span>
+    <span class="stat-label">Active positions</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number">80+</span>
+    <span class="stat-label">Canadian universities</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number stat-accent-teal">400+</span>
+    <span class="stat-label">Research professors</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number">Free</span>
+    <span class="stat-label">Always, for students</span>
+  </div>
+</div>
+
+<section class="section">
+  <div class="section-label">How it works</div>
+  <div class="section-title">Three steps to your next position</div>
+  <p class="section-sub">Klinq makes the research application process simple, transparent, and fast — for both students and labs.</p>
+
+  <div class="steps-grid">
+    <div class="step-card">
+      <span class="step-number">STEP 01</span>
+      <div class="step-icon purple">🔍</div>
+      <h3>Search & filter</h3>
+      <p>Browse positions by specialty, province, funding type, and time commitment. Save searches and get alerts for new postings.</p>
+    </div>
+    <div class="step-card">
+      <span class="step-number">STEP 02</span>
+      <div class="step-icon teal">📄</div>
+      <h3>Apply in one click</h3>
+      <p>Build your Klinq profile once — CV, research interests, GPA, references — then apply to any position without re-entering data.</p>
+    </div>
+    <div class="step-card">
+      <span class="step-number">STEP 03</span>
+      <div class="step-icon purple">✅</div>
+      <h3>Track & communicate</h3>
+      <p>Monitor application status in real time, message professors directly, and manage interview scheduling all in one dashboard.</p>
+    </div>
+  </div>
+</section>
+
+<section class="audience">
+  <div class="audience-inner">
+    <div class="audience-col left">
+      <div class="section-label">For medical students</div>
+      <h2>Your research career starts here.</h2>
+      <p>Whether you're seeking a summer elective, a longitudinal project for your residency application, or a paid research job, Klinq has positions matched to your stage.</p>
+      <ul class="feature-list">
+        <li class="feature-item">
+          <span class="feature-check purple">✓</span>
+          Filter by MD, MD/PhD, clerkship year, and specialty
+        </li>
+        <li class="feature-item">
+          <span class="feature-check purple">✓</span>
+          See stipend, authorship potential, and supervisor h-index upfront
+        </li>
+        <li class="feature-item">
+          <span class="feature-check purple">✓</span>
+          Save favourites and apply with your saved profile
+        </li>
+        <li class="feature-item">
+          <span class="feature-check purple">✓</span>
+          Get notified when labs you follow post openings
+        </li>
+      </ul>
+      <button class="audience-btn purple" onclick="location.href='students.html'">Browse positions →</button>
+    </div>
+
+    <div class="audience-col right">
+      <div class="section-label teal">For professors & labs</div>
+      <h2>Find your next research student.</h2>
+      <p>Post once, reach hundreds of qualified medical students across Canada. Our structured application flow means you get the information you need — nothing more, nothing less.</p>
+      <ul class="feature-list">
+        <li class="feature-item">
+          <span class="feature-check teal">✓</span>
+          Reach students from all 17 Canadian medical schools
+        </li>
+        <li class="feature-item">
+          <span class="feature-check teal">✓</span>
+          Structured applications include CV, transcript, and research statement
+        </li>
+        <li class="feature-item">
+          <span class="feature-check teal">✓</span>
+          Manage candidates and schedule interviews in one place
+        </li>
+        <li class="feature-item">
+          <span class="feature-check teal">✓</span>
+          Free to post — always
+        </li>
+      </ul>
+      <button class="audience-btn teal" onclick="location.href='professors.html'">Post a position →</button>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="section-label" style="color: rgba(255,255,255,0.4); margin-bottom: 16px;">Early access</div>
+  <h2>Be first on Klinq.</h2>
+  <p>We're launching in Fall 2025. Join the waitlist and get early access before the general public.</p>
+  <div class="cta-buttons">
+    <button class="cta-btn purple">Join as a student</button>
+    <button class="cta-btn teal">Join as a professor</button>
+    <button class="cta-btn outline">Learn more</button>
+  </div>
+</section>
+
+<footer>
+  <div class="logo" style="font-size:18px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:700;">
+    <span class="kli">Kli</span><span class="nq">nq</span>
+  </div>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Contact</a>
+  </div>
+  <span class="footer-copy">© 2025 Klinq Technologies Inc.</span>
+</footer>
+
+</body>
+</html>

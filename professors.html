@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Post a Position — Klinq</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --purple: #5B549A;
+    --teal: #2E8A6A;
+    --bg: #F8F7FF;
+    --dark: #1A1A2E;
+    --border: rgba(83,74,183,0.12);
+    --radius: 14px;
+  }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--dark); }
+  h1,h2,h3,h4 { font-family: 'Plus Jakarta Sans', sans-serif; }
+  a { text-decoration: none; color: inherit; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(248,247,255,0.92); backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border);
+    padding: 0 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px;
+  }
+  .logo { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+  .logo .kli { color: var(--purple); }
+  .logo .nq  { color: var(--teal); }
+  .nav-links { display: flex; gap: 32px; font-size: 14px; font-weight: 500; }
+  .nav-links a { color: #555; }
+  .nav-links a:hover { color: var(--purple); }
+  .nav-links a.active { color: var(--teal); }
+  .nav-cta { background: var(--teal); color: #fff; padding: 9px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; border: none; cursor: pointer; }
+
+  /* HERO STRIP */
+  .prof-hero {
+    background: var(--teal);
+    padding: 48px 48px 52px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .prof-hero-left h1 { font-size: 32px; font-weight: 700; color: #fff; letter-spacing: -0.4px; margin-bottom: 8px; }
+  .prof-hero-left p  { font-size: 15px; color: rgba(255,255,255,0.75); max-width: 460px; line-height: 1.6; }
+  .prof-hero-stats { display: flex; gap: 32px; }
+  .hero-stat { text-align: center; }
+  .hero-stat-n { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 28px; font-weight: 700; color: #fff; }
+  .hero-stat-l { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+
+  /* STEPPER */
+  .stepper-wrap { background: #fff; border-bottom: 0.5px solid var(--border); padding: 0 48px; }
+  .stepper { display: flex; align-items: center; gap: 0; height: 64px; max-width: 680px; }
+  .step {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 500; color: #aaa;
+    padding-right: 32px; position: relative;
+  }
+  .step.done  { color: var(--teal); }
+  .step.active { color: var(--dark); }
+  .step-dot {
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 0.5px solid #ddd;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+    background: #fff; color: #bbb;
+  }
+  .step.done .step-dot  { background: var(--teal); border-color: var(--teal); color: #fff; }
+  .step.active .step-dot { background: var(--dark); border-color: var(--dark); color: #fff; }
+  .step-connector { flex: 1; height: 0.5px; background: #e0e0e0; margin: 0 8px; min-width: 24px; }
+  .step-connector.done { background: var(--teal); }
+
+  /* BODY LAYOUT */
+  .body-layout { display: grid; grid-template-columns: 1fr 340px; gap: 32px; padding: 40px 48px 64px; align-items: start; }
+
+  /* FORM */
+  .form-card {
+    background: #fff; border: 0.5px solid var(--border); border-radius: var(--radius);
+    padding: 36px 36px;
+  }
+  .form-section-title {
+    font-size: 18px; font-weight: 700; margin-bottom: 6px; color: var(--dark);
+  }
+  .form-section-sub { font-size: 13px; color: #888; margin-bottom: 28px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .form-group { display: flex; flex-direction: column; gap: 7px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label { font-size: 13px; font-weight: 500; color: #444; }
+  .required { color: var(--teal); margin-left: 2px; }
+  input[type="text"], input[type="email"], input[type="number"], select, textarea {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px; color: var(--dark);
+    border: 0.5px solid rgba(83,74,183,0.2);
+    border-radius: 10px; padding: 11px 14px;
+    background: #fff; outline: none;
+    transition: border-color 0.15s;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--teal); }
+  textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+  select { cursor: pointer; }
+  .char-count { font-size: 11px; color: #bbb; text-align: right; margin-top: 4px; }
+  .form-divider { border: none; border-top: 0.5px solid var(--border); margin: 28px 0; }
+  .toggle-group { display: flex; gap: 0; border: 0.5px solid rgba(83,74,183,0.2); border-radius: 10px; overflow: hidden; }
+  .toggle-opt {
+    flex: 1; padding: 10px 0; text-align: center;
+    font-size: 13px; font-weight: 500; cursor: pointer; color: #888;
+    background: #fff; border: none; transition: all 0.15s;
+  }
+  .toggle-opt.active { background: var(--teal); color: #fff; }
+  .toggle-opt:not(.active):hover { background: rgba(29,158,117,0.06); }
+  .checkbox-row { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #444; cursor: pointer; }
+  .checkbox-row input { accent-color: var(--teal); width: 15px; height: 15px; }
+  .checkboxes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px; }
+  .tag-input-wrap {
+    border: 0.5px solid rgba(83,74,183,0.2); border-radius: 10px;
+    padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 6px;
+    background: #fff; cursor: text;
+  }
+  .tag-chip {
+    background: rgba(29,158,117,0.1); color: #0c6e51;
+    border: 0.5px solid rgba(29,158,117,0.25);
+    border-radius: 6px; font-size: 12px; padding: 4px 10px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .tag-chip button { background: none; border: none; cursor: pointer; color: inherit; font-size: 13px; padding: 0; line-height: 1; }
+  .tag-input-wrap input { border: none; outline: none; font-size: 13px; font-family: 'Inter', sans-serif; min-width: 100px; flex: 1; }
+
+  /* FORM ACTIONS */
+  .form-actions { display: flex; align-items: center; justify-content: space-between; margin-top: 28px; }
+  .btn-secondary {
+    padding: 11px 22px; border-radius: 10px; font-size: 14px; font-weight: 500;
+    border: 0.5px solid var(--border); background: #fff; cursor: pointer; color: #555;
+  }
+  .btn-primary {
+    padding: 11px 26px; border-radius: 10px; font-size: 14px; font-weight: 600;
+    background: var(--teal); color: #fff; border: none; cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
+    transition: background 0.1s;
+  }
+  .btn-primary:hover { background: #168a65; }
+
+  /* SIDEBAR */
+  .sidebar-panel { display: flex; flex-direction: column; gap: 16px; }
+  .info-card {
+    background: #fff; border: 0.5px solid var(--border); border-radius: var(--radius);
+    padding: 24px;
+  }
+  .info-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 10px; color: var(--dark); }
+  .info-card p  { font-size: 13px; color: #666; line-height: 1.6; }
+  .preview-card {
+    background: #fff; border: 0.5px solid var(--border); border-radius: var(--radius);
+    padding: 24px;
+  }
+  .preview-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--teal); margin-bottom: 14px; }
+  .preview-title { font-size: 15px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .preview-sub   { font-size: 12px; color: #888; margin-bottom: 14px; }
+  .preview-tags  { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .preview-tag   { font-size: 11px; padding: 3px 9px; border-radius: 5px; background: rgba(29,158,117,0.1); color: #0c6e51; }
+  .preview-divider { border: none; border-top: 0.5px solid var(--border); margin: 12px 0; }
+  .preview-meta  { font-size: 12px; color: #aaa; }
+  .tip-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+  .tip-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #555; line-height: 1.5; }
+  .tip-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); flex-shrink: 0; margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo"><span class="kli">Kli</span><span class="nq">nq</span></a>
+  <div class="nav-links">
+    <a href="students.html">Browse Positions</a>
+    <a href="professors.html" class="active">Post a Position</a>
+    <a href="dashboard.html">My Applications</a>
+    <a href="index.html">About</a>
+  </div>
+  <button class="nav-cta">Professor Sign In</button>
+</nav>
+
+<div class="prof-hero">
+  <div class="prof-hero-left">
+    <h1>Post a research position</h1>
+    <p>Reach motivated medical students across all 17 Canadian medical schools. Free to post, always.</p>
+  </div>
+  <div class="prof-hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-n">9,400+</div>
+      <div class="hero-stat-l">Registered students</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-n">~18</div>
+      <div class="hero-stat-l">Avg. applications</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-n">4 days</div>
+      <div class="hero-stat-l">Avg. to first match</div>
+    </div>
+  </div>
+</div>
+
+<div class="stepper-wrap">
+  <div class="stepper">
+    <div class="step done">
+      <div class="step-dot">✓</div>
+      Position details
+    </div>
+    <div class="step-connector done"></div>
+    <div class="step active">
+      <div class="step-dot">2</div>
+      Requirements
+    </div>
+    <div class="step-connector"></div>
+    <div class="step">
+      <div class="step-dot">3</div>
+      Application settings
+    </div>
+    <div class="step-connector"></div>
+    <div class="step">
+      <div class="step-dot">4</div>
+      Review & publish
+    </div>
+  </div>
+</div>
+
+<div class="body-layout">
+
+  <div>
+    <div class="form-card">
+      <div class="form-section-title">Student requirements</div>
+      <div class="form-section-sub">Specify what you're looking for — be specific to attract the best-fit applicants.</div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Eligible student years <span class="required">*</span></label>
+          <div class="checkboxes-grid">
+            <label class="checkbox-row"><input type="checkbox" checked /> MD Year 1</label>
+            <label class="checkbox-row"><input type="checkbox" checked /> MD Year 2</label>
+            <label class="checkbox-row"><input type="checkbox" /> MD Year 3 (Clerkship)</label>
+            <label class="checkbox-row"><input type="checkbox" /> MD Year 4</label>
+            <label class="checkbox-row"><input type="checkbox" /> MD/PhD</label>
+            <label class="checkbox-row"><input type="checkbox" /> Resident (PGY1+)</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Required medical schools</label>
+          <select>
+            <option>Any Canadian medical school</option>
+            <option>University of Toronto</option>
+            <option>McGill University</option>
+            <option>University of British Columbia</option>
+            <option>University of Alberta</option>
+            <option>McMaster University</option>
+          </select>
+          <span style="font-size:12px; color:#aaa; margin-top:4px;">Leave as "Any" to maximize applicant reach</span>
+        </div>
+
+        <div class="form-group full">
+          <label>Prior experience required</label>
+          <div class="toggle-group">
+            <button class="toggle-opt">None — we'll train</button>
+            <button class="toggle-opt active">Basic lab skills</button>
+            <button class="toggle-opt">Wet lab experience</button>
+            <button class="toggle-opt">Prior publications</button>
+          </div>
+        </div>
+
+        <div class="form-group full">
+          <label>Technical skills (optional)</label>
+          <div class="tag-input-wrap">
+            <span class="tag-chip">R / RStudio <button>×</button></span>
+            <span class="tag-chip">SPSS <button>×</button></span>
+            <span class="tag-chip">PCR <button>×</button></span>
+            <input type="text" placeholder="Add a skill and press Enter…" />
+          </div>
+          <span style="font-size:12px; color:#aaa; margin-top:4px;">e.g. Python, STATA, Flow Cytometry, REDCap</span>
+        </div>
+
+        <div class="form-group full">
+          <label>Minimum GPA (optional)</label>
+          <div class="toggle-group" style="max-width: 360px;">
+            <button class="toggle-opt active">No minimum</button>
+            <button class="toggle-opt">B+ (77%)</button>
+            <button class="toggle-opt">A– (80%)</button>
+            <button class="toggle-opt">A (85%+)</button>
+          </div>
+        </div>
+
+        <div class="form-group full">
+          <label>Languages required</label>
+          <div class="checkboxes-grid" style="grid-template-columns: repeat(4, 1fr);">
+            <label class="checkbox-row"><input type="checkbox" checked /> English</label>
+            <label class="checkbox-row"><input type="checkbox" /> French</label>
+            <label class="checkbox-row"><input type="checkbox" /> Bilingual</label>
+            <label class="checkbox-row"><input type="checkbox" /> Other</label>
+          </div>
+        </div>
+
+      </div>
+
+      <hr class="form-divider" />
+
+      <div class="form-section-title" style="margin-bottom:6px;">What students will gain</div>
+      <div class="form-section-sub">Be transparent about outputs — students prioritize authorship and mentorship.</div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Expected outputs <span class="required">*</span></label>
+          <div class="checkboxes-grid">
+            <label class="checkbox-row"><input type="checkbox" checked /> Co-authorship on paper</label>
+            <label class="checkbox-row"><input type="checkbox" /> Conference abstract</label>
+            <label class="checkbox-row"><input type="checkbox" checked /> Supervisor reference letter</label>
+            <label class="checkbox-row"><input type="checkbox" /> Thesis credit</label>
+            <label class="checkbox-row"><input type="checkbox" /> Certificate of completion</label>
+            <label class="checkbox-row"><input type="checkbox" /> Academic credit</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Mentorship style</label>
+          <select>
+            <option>Hands-on — daily PI involvement</option>
+            <option selected>Structured — weekly check-ins with PI</option>
+            <option>Independent — managed by senior trainee</option>
+          </select>
+        </div>
+
+        <div class="form-group full">
+          <label>Additional notes for applicants</label>
+          <textarea placeholder="e.g. 'We are a highly collaborative lab with a strong culture of peer mentorship. Students are encouraged to lead their own projects within 6 months...'"></textarea>
+          <div class="char-count">0 / 500</div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-secondary">← Back</button>
+        <button class="btn-primary">Continue to application settings →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-panel">
+
+    <div class="preview-card">
+      <div class="preview-label">Live preview</div>
+      <div class="preview-title">Clinical Cardiovascular Outcomes — Summer Student</div>
+      <div class="preview-sub">Dr. Ananya Mehta · University of Toronto</div>
+      <div class="preview-tags">
+        <span class="preview-tag">Cardiology</span>
+        <span class="preview-tag">$7,500</span>
+        <span class="preview-tag">12 weeks</span>
+        <span class="preview-tag">On-site</span>
+      </div>
+      <hr class="preview-divider" />
+      <div class="preview-meta">MD1–MD2 · English · Basic lab skills · Co-authorship</div>
+    </div>
+
+    <div class="info-card">
+      <h4>Tips for more applications</h4>
+      <ul class="tip-list">
+        <li class="tip-item"><span class="tip-dot"></span>Positions with a listed stipend get 3× more applicants on average.</li>
+        <li class="tip-item"><span class="tip-dot"></span>Mention authorship potential upfront — it's the #1 factor for students choosing labs.</li>
+        <li class="tip-item"><span class="tip-dot"></span>Specifying "no minimum GPA" doubles your applicant pool.</li>
+        <li class="tip-item"><span class="tip-dot"></span>Postings with a clear deadline fill 40% faster than rolling admissions.</li>
+      </ul>
+    </div>
+
+    <div class="info-card">
+      <h4>Your profile</h4>
+      <p>Students can view your Google Scholar h-index, lab website, and past Klinq positions. <a href="#" style="color: var(--teal);">Complete your lab profile →</a></p>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>
