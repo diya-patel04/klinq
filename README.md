@@ -1,1 +1,1 @@
-# klinq
+# kliniq
